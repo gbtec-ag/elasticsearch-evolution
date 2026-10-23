@@ -46,13 +46,8 @@ public class EmbeddedElasticsearchExtension implements TestInstancePostProcessor
     private static final Logger logger = LoggerFactory.getLogger(EmbeddedElasticsearchExtension.class);
     private static final Namespace NAMESPACE = Namespace.create(ExtensionContext.class);
     private static final SortedSet<SearchContainer> SUPPORTED_SEARCH_VERSIONS = Collections.unmodifiableSortedSet(new TreeSet<>(Arrays.asList(
-            ofOpensearch("3.6.0"),
-            ofOpensearch("3.5.0"),
-            ofOpensearch("2.19.5"),
-
-            ofElasticsearch("9.3.4"),
-            ofElasticsearch("9.2.8"),
-            ofElasticsearch("8.19.15")
+            // we removed the other versions to improve the runtime of the tests for our experiments
+            ofElasticsearch("9.3.4")
     )));
 
     @Override
@@ -148,7 +143,7 @@ public class EmbeddedElasticsearchExtension implements TestInstancePostProcessor
                         final EvolutionRestClient<?> evolutionRestClient = new EvolutionOpenSearchRestClient(restClient);
                         final EsUtils esUtils = new EsUtils(evolutionRestClient, openSearchClient);
                         cleanup(esUtils, searchContainer.getInfo());
-                        return Arguments.of(searchContainer.getShortInfo(), esUtils);
+                        return Arguments.of(searchContainer.getShortInfo(), esUtils, elasticsearchContainer);
                     });
         }
     }

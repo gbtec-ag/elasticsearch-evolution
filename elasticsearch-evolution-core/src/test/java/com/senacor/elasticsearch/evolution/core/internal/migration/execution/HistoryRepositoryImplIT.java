@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opensearch.client.opensearch.core.GetResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.GenericContainer;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -50,6 +51,19 @@ class HistoryRepositoryImplIT {
             NavigableSet<MigrationScriptProtocol> all = underTest.findAll();
 
             assertThat(all).isEmpty();
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @ArgumentsSource(ElasticsearchArgumentsProvider.class)
+        void test_migration_interruption(String versionInfo, EsUtils esUtils, GenericContainer<?> container) {
+
+            System.out.println(container.getContainerId());
+            container.getDockerClient().stopContainerCmd(container.getContainerId()).exec();
+
+            // start Elasticsearch container
+            // start migration
+            // stop container during migration (without removing)
+            // start again to check the lock status
         }
 
         @ParameterizedTest(name = "{0}")
